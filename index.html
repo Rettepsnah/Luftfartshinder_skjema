@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Søknad om Luftfartshinder</title>
+    <style>
+        :root {
+            --primary-blue: #005596;
+            --text-color: #000;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-color);
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* --- Header Styles --- */
+        .header-bar {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .reg-ref {
+            text-align: right;
+            font-size: 10px;
+            font-style: italic;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
+        /* --- Form Elements --- */
+        .form-row { margin-bottom: 15px; }
+        
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        
+        input[type="text"], input[type="email"], input[type="date"], textarea, select {
+            width: 100%;
+            border: none;
+            border-bottom: 1px dotted #000;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            padding: 3px 0;
+            transition: background 0.3s;
+        }
+
+        input:disabled {
+            background-color: #eee;
+            border-bottom: 1px dotted #999;
+            color: #999;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            margin-top: 3px;
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+
+        /* --- Signature Pad Styles --- */
+        .signature-wrapper {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fafafa;
+            border: 1px dashed #ccc;
+            position: relative;
+        }
+        
+        canvas#sigCanvas {
+            width: 100%;
+            height: 120px;
+            background-color: #fff;
+            border-bottom: 1px solid #000;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .sig-clear-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* --- Layout Sections --- */
+        .bordered-section {
+            border: 1px solid #000;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        .obstacle-section {
+            border: 2px solid var(--primary-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .obstacle-header {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--primary-blue);
+            padding-bottom: 5px;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        .add-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto 30px auto;
+            border-radius: 4px;
+        }
+
+        .add-btn:hover { background-color: #003d6b; }
+
+        .highlight-yellow {
+            background-color: #fff8e1;
+            padding: 15px;
+            border: 1px solid #e0c200;
+        }
+
+        .legal-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .legal-list li { margin-bottom: 8px; }
+
+        .hidden-annet {
+            display: none;
+            margin-top: 10px;
+            border-left: 3px solid var(--primary-blue);
+            padding-left: 10px;
+        }
+
+        /* --- Print Styles --- */
+        @media print {
+            body { background-color: white; margin: 0; padding: 0; }
+            .container { width: 100%; max-width: none; box-shadow: none; padding: 0; margin: 0; }
+            .sig-clear-btn, .add-btn, .remove-btn { display: none !important; }
+            .highlight-yellow { background-color: transparent !important; border: 1px solid #000; }
+            .signature-wrapper { border: none; background: transparent; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <form id="declarationForm">
+            <div class="header-bar">SØKNADSSKJEMA</div>
+            <div class="reg-ref">Forskrift om luftfartshinder</div>
+
+            <div class="main-title">
+                SØKNAD OM LUFTFARTSHINDER
+            </div>
+
+            <!-- Søknadstype -->
+            <div class="bordered-section">
+                <label>Hva gjelder søknaden?</label>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="type-dispensasjon" checked>
+                    <span>Dispensasjonssøknad</span>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox">
+                    <span>Nyregistrering (Standard)</span>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox">
+                    <span>Endring av eksisterende hinder</span>
+                </div>
+            </div>
+
+            <!-- Lovtekst boks -->
+            <div class="highlight-yellow" style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: #000;">Krav til dispensasjon</h4>
+                <p style="margin: 0;">I henhold til <a href="https://lovdata.no/forskrift/2014-07-15-980/§21" target="_blank" style="color: var(--primary-blue);">forskrift om luftfartshinder § 21</a>, kreves følgende for å kunne få innvilget dispensasjon:</p>
+                <ol class="legal-list">
+                    <li>Dispensasjon krever grunngitt søknad.</li>
+                    <li>Luftfartstilsynet kan etter en konkret helhetsvurdering gi varig eller midlertidig dispensasjon fra bestemmelser fastsatt i denne forskrift. Det kan settes vilkår for dispensasjonen.</li>
+                    <li>Dispensasjon kan ikke gis dersom hensynene bak bestemmelsen det dispenseres fra blir vesentlig tilsidesatt. I tillegg må fordelene ved å gi dispensasjon være klart større enn ulempene etter en samlet vurdering. Det kan ikke dispenseres fra saksbehandlingsregler.</li>
+                    <li>Ved vurderingen skal det legges særlig vekt på trafikktettheten i området, flygemønster og om annen nærliggende merking kan anses for å gi tilfredsstillende samlet merking.</li>
+                </ol>
+            </div>
+
+            <!-- Søkerinformasjon -->
+            <div class="bordered-section">
+                <div class="obstacle-header">Informasjon om søker</div>
+                
+                <div class="form-row">
+                    <label>Organisasjonsnavn:</label>
+                    <input type="text" placeholder="F.eks. Nettselskap AS">
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 20px; align-items: flex-end;">
+                    <div style="flex-grow: 1;">
+                        <label>Organisasjonsnummer:</label>
+                        <input type="text" id="org-nummer" placeholder="9 sifre">
+                    </div>
+                    <div class="checkbox-row" style="margin-bottom: 5px;">
+                        <input type="checkbox" id="privatperson-check" onchange="toggleOrgNum(this)">
+                        <span>Søker som privatperson</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Sted / område (Generelt for saken):</label>
+                    <input type="text" placeholder="F.eks. Surna-Viklandet 1">
+                </div>
+            </div>
+
+            <!-- Container for dynamiske hinder -->
+            <div id="obstacles-container">
+                <!-- Template for ett hinder -->
+                <div class="obstacle-section">
+                    <div class="obstacle-header">Informasjon om luftfartshinder</div>
+                    <button type="button" class="remove-btn" onclick="removeObstacle(this)" style="display: none;">Fjern hinder</button>
+
+                    <div class="form-row">
+                        <label>NRL-ID (Obligatorisk):</label>
+                        <input type="text" required placeholder="F.eks. NRL-ID: 52a9eaef-6412-49fe-a608-70fdf3fb7c99">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Intern referanse / navn (Valgfritt):</label>
+                        <input type="text" placeholder="F.eks. Mast FM27">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Hvilken type luftfartshinder?</label>
+                        <select onchange="toggleAnnet(this)">
+                            <option value="" disabled selected>Velg type...</option>
+                            <option value="luftspenn">Luftspenn</option>
+                            <option value="fjordspenn">Fjordspenn</option>
+                            <option value="baeremast">Bæremast</option>
+                            <option value="forankringsmast">Forankringsmast</option>
+                            <option value="telemast">Telemast</option>
+                            <option value="kran">Kran</option>
+                            <option value="bro">Bro</option>
+                            <option value="annet">Annet</option>
+                        </select>
+                        <div class="hidden-annet">
+                            <label>Beskriv hinderet:</label>
+                            <input type="text" placeholder="Fritekst...">
+                        </div>
+                    </div>
+
+                    <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Tekniske data</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-row">
+                            <label>Høyde over terreng (m):</label>
+                            <input type="text" placeholder="Maksimal høyde">
+                        </div>
+                        <div class="form-row">
+                            <label>Horisontal lengde (m):</label>
+                            <input type="text" placeholder="For spenn/bro">
+                        </div>
+                        <div class="form-row">
+                            <label>Avstand fra parallelle spenn (m):</label>
+                            <input type="text">
+                        </div>
+                        <div class="form-row">
+                            <label>Kryssende luftspenn:</label>
+                            <input type="text" placeholder="Beskriv eller angi ID">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Annet teknisk data:</label>
+                        <textarea rows="2" style="border: 1px dotted #000; padding: 5px;"></textarea>
+                    </div>
+
+                    <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Merking og lyssetting</div>
+
+                    <div class="form-row">
+                        <label>Hvilken type merking gjelder det for?</label>
+                        <select onchange="toggleAnnet(this)">
+                            <option value="" disabled selected>Velg type (Samme som hinder)...</option>
+                            <option value="luftspenn">Luftspenn</option>
+                            <option value="fjordspenn">Fjordspenn</option>
+                            <option value="baeremast">Bæremast</option>
+                            <option value="forankringsmast">Forankringsmast</option>
+                            <option value="telemast">Telemast</option>
+                            <option value="kran">Kran</option>
+                            <option value="bro">Bro</option>
+                            <option value="annet">Annet</option>
+                        </select>
+                        <div class="hidden-annet">
+                            <label>Beskriv merkeobjektet:</label>
+                            <input type="text" placeholder="Fritekst...">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-row">
+                            <label>Type lyssetting:</label>
+                            <input type="text" placeholder="Lav/Middels/Høyintensitet m.m.">
+                        </div>
+                        <div class="form-row">
+                            <label>Varselmerking (f.eks. flyteballer):</label>
+                            <input type="text">
+                        </div>
+                        <div class="form-row">
+                            <label>Magebelter:</label>
+                            <input type="text" placeholder="Farger/dimensjon">
+                        </div>
+                        <div class="form-row">
+                            <label>Annet (Merking):</label>
+                            <input type="text">
+                        </div>
+                    </div>
+
+                    <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Argumentasjon og vedlegg</div>
+
+                    <div class="form-row">
+                        <label>Argumentasjon for fritak fra merkeplikten:</label>
+                        <textarea rows="4" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px;" placeholder="Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, trafikktetthet i området, osv."></textarea>
+                    </div>
+
+                    <div class="checkbox-row">
+                        <input type="checkbox" onchange="toggleAttachmentText(this)">
+                        <span>Se eget vedlegg med samlet argumentasjon</span>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 15px; background: #eef5fa; padding: 10px; border-left: 4px solid var(--primary-blue);">
+                        <label>Last opp filer/bilder (.pdf, .jpg, .jpeg støttes):</label>
+                        <input type="file" accept=".pdf, .jpg, .jpeg" multiple style="border: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Knapp for å legge til flere hinder -->
+            <button type="button" class="add-btn" onclick="addObstacle()">+ Legg til et nytt luftfartshinder i søknaden</button>
+
+            <!-- Signatur -->
+            <div class="bordered-section">
+                <div style="display: flex; gap: 20px; margin-bottom: 10px;">
+                    <div style="flex: 0 0 160px;">
+                        <label>Dato:</label>
+                        <input type="date">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Søkers navn (Blokktekst):</label>
+                        <input type="text" placeholder="Skriv fullt navn her">
+                    </div>
+                </div>
+                
+                <label>Signatur:</label>
+                <div class="signature-wrapper">
+                    <canvas id="sigCanvas" width="600" height="150"></canvas>
+                    <button type="button" class="sig-clear-btn" onclick="clearSignature()">X</button>
+                    <div style="text-align: right; font-size: 10px; color: #888;">Signer innenfor boksen</div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // Logikk for deaktivering av org.nummer ved "Privatperson"
+        function toggleOrgNum(checkbox) {
+            const orgInput = document.getElementById('org-nummer');
+            if(checkbox.checked) {
+                orgInput.disabled = true;
+                orgInput.value = '';
+            } else {
+                orgInput.disabled = false;
+            }
+        }
+
+        // Vise/skjule fritekst ved "Annet" i dropdowns
+        function toggleAnnet(selectElement) {
+            const hiddenDiv = selectElement.nextElementSibling;
+            if (selectElement.value === 'annet') {
+                hiddenDiv.style.display = 'block';
+            } else {
+                hiddenDiv.style.display = 'none';
+            }
+        }
+
+        // Tydeliggjøre at argumentasjon finnes i vedlegg
+        function toggleAttachmentText(checkbox) {
+            const textArea = checkbox.parentElement.previousElementSibling.querySelector('textarea');
+            if (checkbox.checked) {
+                textArea.placeholder = "Argumentasjon er lagt ved som eget dokument.";
+            } else {
+                textArea.placeholder = "Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, trafikktetthet i området, osv.";
+            }
+        }
+
+        // Legge til flere hinder dynamisk
+        function addObstacle() {
+            const container = document.getElementById('obstacles-container');
+            const template = container.firstElementChild.cloneNode(true);
+            
+            // Nullstill alle felter i den nye boksen
+            template.querySelectorAll('input:not([type="checkbox"]), textarea').forEach(input => input.value = '');
+            template.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
+            template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+            template.querySelectorAll('.hidden-annet').forEach(div => div.style.display = 'none');
+            
+            // Vis "Fjern hinder" knappen for klonede elementer
+            const removeBtn = template.querySelector('.remove-btn');
+            removeBtn.style.display = 'block';
+
+            container.appendChild(template);
+        }
+
+        // Fjerne dynamiske hinder
+        function removeObstacle(button) {
+            const section = button.parentElement;
+            section.remove();
+        }
+
+        // --- Signature Pad Logic ---
+        const canvas = document.getElementById('sigCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        // Touch Events
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.touches[0].clientX - rect.left;
+            lastY = e.touches[0].clientY - rect.top;
+            e.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.touches[0].clientX - rect.left;
+            const currentY = e.touches[0].clientY - rect.top;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+            
+            [lastX, lastY] = [currentX, currentY];
+            e.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', () => isDrawing = false);
+
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
