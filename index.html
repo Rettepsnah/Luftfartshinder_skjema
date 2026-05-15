@@ -51,7 +51,7 @@
         .main-title {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-transform: uppercase;
             font-size: 18px;
         }
@@ -179,6 +179,13 @@
             padding: 15px;
             border: 1px solid #e0c200;
         }
+        
+        .info-blue {
+            background-color: #eef5fa;
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
 
         .legal-list {
             margin-top: 10px;
@@ -200,6 +207,7 @@
             .container { width: 100%; max-width: none; box-shadow: none; padding: 0; margin: 0; }
             .sig-clear-btn, .add-btn, .remove-btn { display: none !important; }
             .highlight-yellow { background-color: transparent !important; border: 1px solid #000; }
+            .info-blue { background-color: transparent !important; border: 1px solid #000; border-left: 4px solid #000; }
             .signature-wrapper { border: none; background: transparent; padding: 0; }
         }
     </style>
@@ -215,16 +223,31 @@
                 SØKNAD OM LUFTFARTSHINDER
             </div>
 
+            <!-- Informasjonsboks -->
+            <div class="info-blue">
+                <strong style="font-size: 14px;">Veiledning og ordinær registrering</strong>
+                
+                <p style="margin-top: 10px; margin-bottom: 15px;">
+                    Trenger du generell informasjon og veiledning om regelverket rundt luftfartshindre?<br>
+                    <a href="https://www.luftfartstilsynet.no/aktorer/luftfartshinder/" target="_blank" style="color: var(--primary-blue); text-decoration: underline; font-weight: bold;">
+                        Se Luftfartstilsynets temaside for luftfartshinder her.
+                    </a>
+                </p>
+
+                <p style="margin-bottom: 0;">
+                    Vær oppmerksom på at vanlig rapportering, registrering og merking av luftfartshindre gjøres via Kartverket og Nasjonalt register over luftfartshindre (NRL).<br>
+                    <a href="https://www.luftfartstilsynet.no/om-oss/melde-fra/rapportering-registrering-og-merking-av-luftfartshindre/" target="_blank" style="color: var(--primary-blue); text-decoration: underline; font-weight: bold;">
+                        Les mer om ordinær registrering på Luftfartstilsynets sider her.
+                    </a>
+                </p>
+            </div>
+
             <!-- Søknadstype -->
             <div class="bordered-section">
                 <label>Hva gjelder søknaden?</label>
                 <div class="checkbox-row">
                     <input type="checkbox" id="type-dispensasjon" checked>
                     <span>Dispensasjonssøknad</span>
-                </div>
-                <div class="checkbox-row">
-                    <input type="checkbox">
-                    <span>Nyregistrering (Standard)</span>
                 </div>
                 <div class="checkbox-row">
                     <input type="checkbox">
