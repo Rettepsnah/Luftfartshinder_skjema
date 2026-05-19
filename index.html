@@ -35,9 +35,10 @@
             color: white;
             padding: 8px 15px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             display: flex;
             justify-content: space-between;
+            text-transform: uppercase;
         }
 
         .reg-ref {
@@ -46,14 +47,6 @@
             font-style: italic;
             margin-top: 5px;
             margin-bottom: 20px;
-        }
-
-        .main-title {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            font-size: 18px;
         }
 
         /* --- Form Elements --- */
@@ -71,6 +64,13 @@
             outline: none;
             padding: 3px 0;
             transition: background 0.3s;
+        }
+
+        /* Auto-ekspanderende tekstbokser */
+        textarea.auto-expand {
+            overflow: hidden;
+            resize: none;
+            min-height: 20px;
         }
 
         input:disabled {
@@ -227,9 +227,10 @@
             body { background-color: white; margin: 0; padding: 0; }
             .container { width: 100%; max-width: none; box-shadow: none; padding: 0; margin: 0; }
             .sig-clear-btn, .add-btn, .remove-btn, .info-toggle-btn { display: none !important; }
-            .highlight-yellow { background-color: transparent !important; border: 1px solid #000; }
+            .highlight-yellow { background-color: transparent !important; border: 1px solid #000; display: block !important; }
             .info-blue { background-color: transparent !important; border: 1px solid #000; border-left: 4px solid #000; }
             .signature-wrapper { border: none; background: transparent; padding: 0; }
+            textarea.auto-expand { overflow: visible !important; }
         }
     </style>
 </head>
@@ -237,15 +238,12 @@
 
     <div class="container">
         <form id="declarationForm">
-            <div class="header-bar">SØKNADSSKJEMA</div>
+            <!-- Tittel i det blå båndet -->
+            <div class="header-bar">SØKNAD OM ANNEN MERKING AV LUFTFARTSHINDER OG DISPENSASJON</div>
             <div class="reg-ref">Forskrift om luftfartshinder</div>
 
-            <div class="main-title">
-                SØKNAD OM ANNEN MERKING AV LUFTFARTSHINDER OG DISPENSASJON
-            </div>
-
             <!-- Informasjonsboks for veiledning og NRL -->
-            <div class="info-blue">
+            <div class="info-blue" style="margin-top: 20px;">
                 <strong style="font-size: 14px;">Veiledning og ordinær registrering</strong>
                 
                 <p style="margin-top: 10px; margin-bottom: 15px;">
@@ -263,38 +261,25 @@
                 </p>
             </div>
 
-            <!-- Informasjonsboks for Gebyr -->
-            <div class="info-blue" style="background-color: #fff3cd; border-left: 4px solid #ffecb5; margin-bottom: 20px;">
-                <strong style="font-size: 14px; color: #856404;">Informasjon om gebyr for behandling av søknad</strong>
-                <p style="margin-top: 5px; margin-bottom: 0; color: #856404;">
-                    Behandling av dispensasjonssøknader og søknader om annen merking er gebyrbelagt. For nærmere informasjon om satser og fakturering, se <a href="https://lovdata.no/forskrift/2026-01-28-125/§56" target="_blank" style="color: #533f03; text-decoration: underline; font-weight: bold;">forskrift om gebyr til Luftfartstilsynet m.m. § 56</a>.
-                </p>
-            </div>
-
             <!-- Søknadstype -->
             <div class="bordered-section">
                 <label>Hva gjelder søknaden?</label>
                 
-                <div class="checkbox-row">
+                <div class="checkbox-row" style="align-items: center; margin-bottom: 5px;">
                     <input type="checkbox" id="type-dispensasjon">
                     <span>Dispensasjonssøknad</span>
+                    <span class="info-toggle-btn" onclick="toggleInfo('dispensasjon-info-box')" title="Vis mer informasjon om dispensasjon">?</span>
                 </div>
                 
                 <div class="checkbox-row" style="align-items: center; margin-bottom: 5px;">
                     <input type="checkbox" id="type-annen-merking">
                     <span>Annen merking av luftfartshinder</span>
-                    <span class="info-toggle-btn" onclick="toggleInfo('annen-merking-info')" title="Klikk for mer informasjon">?</span>
-                </div>
-                
-                <!-- Skjult informasjonsboks for Annen merking -->
-                <div id="annen-merking-info" style="display: none; margin-left: 30px; margin-bottom: 12px; padding: 10px; background-color: #eef5fa; border-left: 3px solid var(--primary-blue); font-size: 12px;">
-                    <strong>Fravik fra standard merking:</strong><br>
-                    I henhold til <a href="https://lovdata.no/forskrift/2014-07-15-980/§7" target="_blank" style="color: var(--primary-blue);">forskrift om luftfartshinder § 7 fjerde ledd</a>, kan Luftfartstilsynet for luftfartshinder der eier kan dokumentere at merking etter bestemmelsene i kapittel 3 til 5 er teknisk umulig, bestemme at annen merking skal nyttes.
+                    <span class="info-toggle-btn" onclick="toggleInfo('annen-merking-info-box')" title="Vis mer informasjon om annen merking">?</span>
                 </div>
             </div>
 
-            <!-- Lovtekst boks (Dispensasjon) -->
-            <div class="highlight-yellow" style="margin-bottom: 20px;">
+            <!-- Lovtekst boks (Dispensasjon) - Skjult som standard -->
+            <div id="dispensasjon-info-box" class="highlight-yellow" style="display: none; margin-bottom: 20px;">
                 <h4 style="margin: 0 0 10px 0; color: #000;">Krav til dispensasjon</h4>
                 <p style="margin: 0;">I henhold til <a href="https://lovdata.no/forskrift/2014-07-15-980/§21" target="_blank" style="color: var(--primary-blue);">forskrift om luftfartshinder § 21</a>, kreves følgende for å kunne få innvilget dispensasjon:</p>
                 <ol class="legal-list">
@@ -302,6 +287,20 @@
                     <li>Luftfartstilsynet kan etter en konkret helhetsvurdering gi varig eller midlertidig dispensasjon fra bestemmelser fastsatt i denne forskrift. Det kan settes vilkår for dispensasjonen.</li>
                     <li>Dispensasjon kan ikke gis dersom hensynene bak bestemmelsen det dispenseres fra blir vesentlig tilsidesatt. I tillegg må fordelene ved å gi dispensasjon være klart større enn ulempene etter en samlet vurdering. Det kan ikke dispenseres fra saksbehandlingsregler.</li>
                     <li>Ved vurderingen skal det legges særlig vekt på trafikktettheten i området, flygemønster og om annen nærliggende merking kan anses for å gi tilfredsstillende samlet merking.</li>
+                </ol>
+            </div>
+
+            <!-- Lovtekst boks (Annen merking) - Skjult som standard -->
+            <div id="annen-merking-info-box" class="highlight-yellow" style="display: none; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: #000;">Krav til annen merking</h4>
+                <p style="margin: 0;">I henhold til <a href="https://lovdata.no/forskrift/2014-07-15-980/§7" target="_blank" style="color: var(--primary-blue);">forskrift om luftfartshinder § 7 fjerde ledd</a>, kreves følgende for å kunne få godkjent annen merking enn det som ellers fremgår av forskriften:</p>
+                <ol class="legal-list" type="a">
+                    <li>bygge på forskriftens prinsipp om visuell merking</li>
+                    <li>i dagslys være synlig på minst 1500 meters avstand fra alle aktuelle innflygingsvinkler</li>
+                    <li>ved bruk av lys, benytte minst samme lysintensitet som den i forskriften ellers beskrevne for det aktuelle luftfartshinderet</li>
+                    <li>ikke redusere den minste sikkerhet som forskriften ellers fastsetter for noen del av luftfarten</li>
+                    <li>ikke ha negativ innvirkning på flysikkerheten for øvrig, herunder ikke forstyrre luftfartens kommunikasjons-, navigasjons- eller overvåkingsutstyr</li>
+                    <li>for systemer som aktiveres av luftfartøy, ha innebygget system for kontinuerlig visuell merking dersom systemet opphører å virke som det skal.</li>
                 </ol>
             </div>
 
@@ -349,7 +348,7 @@
                     </div>
 
                     <div class="form-row">
-                        <label>Hvilken type luftfartshinder?</label>
+                        <label>Type luftfartshinder:</label>
                         <select onchange="toggleAnnetDropdown(this)">
                             <option value="" disabled selected>Velg type...</option>
                             <option value="luftspenn">Luftspenn</option>
@@ -363,7 +362,7 @@
                         </select>
                         <div class="hidden-annet">
                             <label>Beskriv hinderet:</label>
-                            <input type="text" placeholder="Fritekst...">
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
                     </div>
 
@@ -372,24 +371,24 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div class="form-row">
                             <label>Høyde over terreng (m):</label>
-                            <input type="text" placeholder="Maksimal høyde">
+                            <textarea class="auto-expand" rows="1" placeholder="Maksimal høyde"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Horisontal lengde (m):</label>
-                            <input type="text" placeholder="For spenn/bro">
+                            <textarea class="auto-expand" rows="1" placeholder="For spenn/bro"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Avstand fra parallelle spenn (m):</label>
-                            <input type="text">
+                            <textarea class="auto-expand" rows="1" placeholder="Hvis relevant"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Kryssende luftspenn:</label>
-                            <input type="text" placeholder="Beskriv eller angi ID">
+                            <textarea class="auto-expand" rows="1" placeholder="Beskriv eller angi ID"></textarea>
                         </div>
                     </div>
                     <div class="form-row">
                         <label>Annet teknisk data:</label>
-                        <textarea rows="2" style="border: 1px dotted #000; padding: 5px;"></textarea>
+                        <textarea class="auto-expand" rows="1" placeholder="Tilleggsopplysninger"></textarea>
                     </div>
 
                     <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Merking og lyssetting</div>
@@ -409,34 +408,34 @@
                         </select>
                         <div class="hidden-annet">
                             <label>Beskriv merkeobjektet:</label>
-                            <input type="text" placeholder="Fritekst...">
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div class="form-row">
                             <label>Type lyssetting:</label>
-                            <input type="text" placeholder="Lav/Middels/Høyintensitet m.m.">
+                            <textarea class="auto-expand" rows="1" placeholder="Lav/Middels/Høyintensitet m.m."></textarea>
                         </div>
                         <div class="form-row">
                             <label>Varselmerking (f.eks. markører):</label>
-                            <input type="text">
+                            <textarea class="auto-expand" rows="1" placeholder="Type og dimensjon"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Magebelter:</label>
-                            <input type="text" placeholder="Farger/dimensjon">
+                            <textarea class="auto-expand" rows="1" placeholder="Farger/dimensjon"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Annet (Merking):</label>
-                            <input type="text">
+                            <textarea class="auto-expand" rows="1" placeholder="Tilleggsopplysninger"></textarea>
                         </div>
                     </div>
 
                     <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Argumentasjon og vedlegg</div>
 
                     <div class="form-row">
-                        <label>Argumentasjon for annen merking / fritak fra merkeplikten:</label>
-                        <textarea rows="4" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px;" placeholder="Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, tekniske begrensninger, trafikktetthet i området, osv."></textarea>
+                        <label>Argumentasjon:</label>
+                        <textarea class="auto-expand" rows="4" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px;" placeholder="Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, tekniske begrensninger, trafikktetthet i området, osv."></textarea>
                     </div>
 
                     <div class="checkbox-row">
@@ -445,14 +444,25 @@
                     </div>
 
                     <div class="form-row" style="margin-top: 15px; background: #eef5fa; padding: 10px; border-left: 4px solid var(--primary-blue);">
-                        <label>Last opp filer/bilder (.pdf, .jpg, .jpeg støttes):</label>
-                        <input type="file" accept=".pdf, .jpg, .jpeg" multiple style="border: none;">
+                        <label>Last opp filer/bilder (.pdf, .jpg, .jpeg, .kmz, .kml støttes):</label>
+                        <input type="file" accept=".pdf, .jpg, .jpeg, .kmz, .kml" multiple style="border: none;">
                     </div>
                 </div>
             </div>
 
             <!-- Knapp for å legge til flere hinder -->
             <button type="button" class="add-btn" onclick="addObstacle()">+ Legg til et nytt luftfartshinder i søknaden</button>
+
+            <!-- Informasjonsboks for Gebyr -->
+            <div class="info-blue" style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px;">
+                <div style="background-color: var(--primary-blue); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-top: -2px;">!</div>
+                <div>
+                    <strong style="font-size: 14px;">Informasjon om gebyr for behandling av søknad</strong>
+                    <p style="margin-top: 5px; margin-bottom: 0;">
+                        Behandling av dispensasjonssøknader og søknader om annen merking er gebyrbelagt. For nærmere informasjon om satser og fakturering, se <a href="https://lovdata.no/forskrift/2026-01-28-125/§56" target="_blank" style="color: var(--primary-blue); text-decoration: underline; font-weight: bold;">forskrift om gebyr til Luftfartstilsynet m.m. § 56</a>.
+                    </p>
+                </div>
+            </div>
 
             <!-- Signatur -->
             <div class="bordered-section">
@@ -479,6 +489,14 @@
     </div>
 
     <script>
+        // JS for auto-ekspanderende textareas
+        document.addEventListener('input', function (event) {
+            if (event.target.tagName.toLowerCase() === 'textarea' && event.target.classList.contains('auto-expand')) {
+                event.target.style.height = 'auto';
+                event.target.style.height = (event.target.scrollHeight) + 'px';
+            }
+        }, false);
+
         // Vise/skjule informasjonsboks
         function toggleInfo(elementId) {
             const el = document.getElementById(elementId);
@@ -531,6 +549,9 @@
             template.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
             template.querySelectorAll('.hidden-annet').forEach(div => div.style.display = 'none');
             
+            // Tilbakestill høyden på tekstboksene
+            template.querySelectorAll('.auto-expand').forEach(ta => ta.style.height = 'auto');
+
             // Vis "Fjern hinder" knappen for klonede elementer
             const removeBtn = template.querySelector('.remove-btn');
             removeBtn.style.display = 'block';
