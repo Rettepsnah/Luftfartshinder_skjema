@@ -300,6 +300,16 @@
                     <li>ikke ha negativ innvirkning på flysikkerheten for øvrig, herunder ikke forstyrre luftfartens kommunikasjons-, navigasjons- eller overvåkingsutstyr</li>
                     <li>for systemer som aktiveres av luftfartøy, ha innebygget system for kontinuerlig visuell merking dersom systemet opphører å virke som det skal.</li>
                 </ol>
+
+                <h4 style="margin: 20px 0 10px 0; color: #000;"><a href="https://lovdata.no/forskrift/2014-07-15-980/§19" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">§ 19. Saksbehandling ved søknad om annen merking av luftfartshinder</a></h4>
+                <p style="margin-bottom: 8px;">(1) Annen merking i medhold av § 7 fjerde ledd kan godkjennes av Luftfartstilsynet etter søknad fra hindereier.</p>
+                <p style="margin-bottom: 8px;">(2) Det er den samlede konkrete merking av et luftfartshinder som kan godkjennes av Luftfartstilsynet, enten hele merkingen utføres som annen merking eller om det kun er elementer av den forskriftsbestemte merkingen som erstattes av annen merking. Det kan verken generelt eller konkret gis godkjenning for enkeltkomponenter eller elementer av en hindermerking.</p>
+                <p style="margin-bottom: 0;">(3) Godkjenning kan gis etter at merkingen er utført, og det er dokumentert at merkingen oppfyller kravene i § 7 fjerde ledd.</p>
+
+                <h4 style="margin: 20px 0 10px 0; color: #000;"><a href="https://pro2.lovdata.no/dokument/SF/forskrift/2014-07-15-980/§20" target="_blank" style="color: var(--primary-blue); text-decoration: underline;">§ 20. Krav til dokumentasjon ved søknad om annen merking av luftfartshinder</a></h4>
+                <p style="margin-bottom: 8px;">(1) Det må dokumenteres at annen merking av luftfartshinder er i samsvar med kravene i § 7 fjerde ledd. Luftfartstilsynet kan kreve teknisk beskrivelse og dokumentasjon, funksjonsbeskrivelse, risikoanalyse etter anerkjent standard eller annen dokumentasjon nødvendig for å sikre at merkingen fungerer hensiktsmessig.</p>
+                <p style="margin-bottom: 8px;">(2) Det skal alltid utarbeides risikoanalyse etter anerkjent standard dersom annen merking kan forstyrre luftfartens kommunikasjons-, navigasjons eller overvåkingsutstyr.</p>
+                <p style="margin-bottom: 0;">(3) Luftfartstilsynet kan kreve at det utføres kontrollflyging for å verifisere at merkingen fungerer i henhold til dokumentasjonen. Kostnader knyttet til kontrollflyging må dekkes av søker.</p>
             </div>
 
             <div class="bordered-section">
@@ -322,7 +332,7 @@
                 </div>
 
                 <div class="form-row">
-                    <label>Sted / område (Generelt for saken):</label>
+                    <label>Sted / område (generelt for saken):</label>
                     <input type="text" placeholder="F.eks. Region / Kommune / Områdenavn">
                 </div>
             </div>
@@ -350,9 +360,10 @@
                             <option value="fjordspenn">Fjordspenn</option>
                             <option value="baeremast">Bæremast</option>
                             <option value="forankringsmast">Forankringsmast</option>
-                            <option value="telemast">Telemast</option>
+                            <option value="Mast">Mast</option>
                             <option value="kran">Kran</option>
                             <option value="bro">Bro</option>
+                            <option value="forankret_ballong_drake_uav">Forankret ballong, drake eller ubemannet luftfartøy.</option>
                             <option value="annet">Annet</option>
                         </select>
                         <div class="hidden-annet">
@@ -370,7 +381,7 @@
                         </div>
                         <div class="form-row">
                             <label>Horisontal lengde (m):</label>
-                            <textarea class="auto-expand" rows="1" placeholder="For spenn/bro"></textarea>
+                            <textarea class="auto-expand" rows="1" placeholder="For spenn"></textarea>
                         </div>
                         <div class="form-row">
                             <label>Avstand fra parallelle spenn (m):</label>
@@ -388,54 +399,76 @@
 
                     <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Merking og lyssetting</div>
 
-                    <div class="form-row">
-                        <label>Hvilken type merking gjelder det for?</label>
-                        <select onchange="toggleAnnetDropdown(this)">
-                            <option value="" disabled selected>Velg type (Samme som hinder)...</option>
-                            <option value="luftspenn">Luftspenn</option>
-                            <option value="fjordspenn">Fjordspenn</option>
-                            <option value="baeremast">Bæremast</option>
-                            <option value="forankringsmast">Forankringsmast</option>
-                            <option value="telemast">Telemast</option>
-                            <option value="kran">Kran</option>
-                            <option value="bro">Bro</option>
-                            <option value="annet">Annet</option>
-                        </select>
-                        <div class="hidden-annet">
-                            <label>Beskriv merkeobjektet:</label>
+                    <div style="margin-bottom: 10px; font-weight: bold; color: var(--primary-blue);">Luftfartshinderets planlagte merking</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Fargemerking:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Hinderlys:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Markører:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Annet:</label>
                             <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="form-row">
-                            <label>Type lyssetting:</label>
-                            <textarea class="auto-expand" rows="1" placeholder="Lav/Middels/Høyintensitet m.m."></textarea>
+                    <div style="margin-bottom: 10px; font-weight: bold; color: var(--primary-blue);">Det søkes dispensasjon for</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Fargemerking:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
-                        <div class="form-row">
-                            <label>Varselmerking (f.eks. markører):</label>
-                            <textarea class="auto-expand" rows="1" placeholder="Type og dimensjon"></textarea>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Hinderlys:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
-                        <div class="form-row">
-                            <label>Magebelter:</label>
-                            <textarea class="auto-expand" rows="1" placeholder="Farger/dimensjon"></textarea>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Markører:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
-                        <div class="form-row">
-                            <label>Annet (Merking):</label>
-                            <textarea class="auto-expand" rows="1" placeholder="Tilleggsopplysninger"></textarea>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Annet:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px; font-weight: bold; color: var(--primary-blue);">Det søkes om annen merking av</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Fargemerking:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Hinderlys:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Markører:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <label style="font-size: 12px;">Annet:</label>
+                            <textarea class="auto-expand" rows="1" placeholder="Fritekst..."></textarea>
                         </div>
                     </div>
 
                     <div class="obstacle-header" style="margin-top: 20px; font-size: 13px; color: #444;">Argumentasjon og vedlegg</div>
 
                     <div class="form-row">
-                        <label>Argumentasjon:</label>
-                        <textarea class="auto-expand" rows="4" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px;" placeholder="Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, tekniske begrensninger, trafikktetthet i området, osv."></textarea>
+                        <label>Redegjørelse:</label>
+                        <textarea class="auto-expand" rows="4" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px;" placeholder="Redegjørelse for søknad om dispensasjon eller annen merking"></textarea>
                     </div>
 
                     <div class="checkbox-row">
                         <input type="checkbox" onchange="toggleAttachmentText(this)">
-                        <span>Se eget vedlegg med samlet argumentasjon og eventuell dokumentasjon på teknisk umulighet</span>
+                        <span>Se eget vedlegg med samlet argumentasjon</span>
                     </div>
 
                     <div class="form-row info-blue" style="margin-top: 15px; padding: 10px; margin-bottom: 0;">
@@ -524,7 +557,7 @@
         function toggleAttachmentText(checkbox) {
             const textArea = checkbox.parentElement.previousElementSibling.querySelector('textarea');
             if (checkbox.checked) {
-                textArea.placeholder = "Argumentasjon og/eller dokumentasjon er lagt ved som eget dokument.";
+                textArea.placeholder = "Redegjørelse og/eller dokumentasjon er lagt ved som eget dokument.";
             } else {
                 textArea.placeholder = "Beskriv hvorfor fordelene ved å gi dispensasjon er klart større enn ulempene, tekniske begrensninger, trafikktetthet i området, osv.";
             }
